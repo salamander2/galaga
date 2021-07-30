@@ -8,7 +8,7 @@ public class Shot extends Rectangle {
 	int shotSpeed = 24;
 	
 	Shot(Rectangle ship) {
-		System.out.println("init shot "+ship.x+","+ship.y);
+		//System.out.println("init shot "+ship.x+","+ship.y);
 		x=ship.x;
 		y=ship.y;
 		height=30;
@@ -16,7 +16,7 @@ public class Shot extends Rectangle {
 		bFired=true;
 
 	}
-	public void moveShot() {
+	void moveShot() {
 		//System.out.println("move shot");
 		x=x+1;
 		y=y-shotSpeed;
