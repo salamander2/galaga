@@ -50,7 +50,6 @@ public class Galaga5 {
 	static int 		 BGSPEED 	= 5;
 	ArrayList<Point> stars = new ArrayList<Point>();
 	ArrayList<Color> starColors = new ArrayList<Color>();
-	int iStarTimer=0;
 
 	//Scoring and Other Text Display in TTF font 
 	int iScore=0;
@@ -65,6 +64,7 @@ public class Galaga5 {
 		while(true) {
 			calcGraphics();
 			drawGraphics();
+			//Debug
 			gc.setTitle("Shots:"+shots.size() + "    Bombs:"+ bombs.size());
 			gc.sleep(15);
 		}
@@ -130,29 +130,27 @@ public class Galaga5 {
 		if(bShipExplode) return;
 
 		if (gc.isKeyDown('A')) {
-			ship.x -=shipSpeed;
+			ship.x -= shipSpeed;
 			if (ship.x < 0) ship.x = 0;
 		}
 		if (gc.isKeyDown('D')) {
-			//	System.out.println("Move Right!");
 			ship.x +=shipSpeed;
 			if (ship.x + ship.width > WINW-25) ship.x = WINW-ship.width-25; 
 		}
 	}
 
 	void drawGraphics() {
-		
+
 		synchronized(gc) {
 			gc.clear();
 
 			//	Draw the ship
 			showSprite2(0,7,0,0,ship.x,ship.y);
 
-			//MH modes
 			// Draw all aliens
 			for (Alien a: aliens) {
 				//sTitle=sTitle+"iMode: "+a.iMode+" iAttack="+a.iAttack+", ";
-				if(a.iMode==Alien.MODE_ARRIVE || a.iMode==Alien.MODE_IDLE) { // if Arrival Mode OR Idle Mode
+				if(a.iMode==Alien.MODE_ARRIVE || a.iMode==Alien.MODE_IDLE) { 
 					showSprite2(
 							a.redAlien[a.iLine][0], // Sprite ID
 							a.redAlien[a.iLine][1], // Rotation
@@ -166,9 +164,9 @@ public class Galaga5 {
 					gc.setColor(Color.YELLOW);
 					gc.fillOval(a.x-(int)(0.5*a.iExplode*10), a.y-(int)(0.5*a.iExplode*10), a.iExplode*10, a.iExplode*10);
 				}
-				if(a.iMode==Alien.MODE_ATTACK) { // if Attack Mode	
+				if(a.iMode==Alien.MODE_ATTACK) { 	
 					showSprite2(
-							a.redAlien[a.iLine][0], // Sprite ID (based on arrival data
+							a.redAlien[a.iLine][0], // Sprite ID (based on arrival data)
 							a.redAttack[a.iAttack][1], // Rotation
 							a.redAttack[a.iAttack][2], // Flip X
 							a.redAttack[a.iAttack][3], // Flip Y
@@ -180,13 +178,11 @@ public class Galaga5 {
 			}
 			for (Shot s: shots) {
 				if(s.bFired) {
-					//sTitle=sTitle+"s.x="+s.x+", s.y="+s.y;
 					showSprite2(0,8,0,0,s.x, s.y);
 				};
 			}
 			for (Bomb b: bombs) {
 				if(b.bDropped) {
-					//sTitle=sTitle+"s.x="+s.x+", s.y="+s.y;
 					showSprite2(0,8,0,0,b.x, b.y);		
 				}				
 			}		
@@ -203,19 +199,17 @@ public class Galaga5 {
 				bShipExplode=false;
 			}
 		}
-
-		//gc.setTitle(sTitle);		
 	}
 
 	public  void alienGo(Alien a) {
-		if(a.iMode==Alien.MODE_PREP) { 						// Preparing for arrival
+		if(a.iMode==Alien.MODE_PREP) {	// Preparing for arrival
 			a.iArrival--;
 			if(a.iArrival==0) a.iMode=Alien.MODE_ARRIVE; 	
 		}
 
-		if(a.iMode==Alien.MODE_ARRIVE) { 						// Arrival
+		if(a.iMode==Alien.MODE_ARRIVE) {	// Arrival
 			a.iLine++;
-			if (a.iLine>0&&a.iLine<79) {
+			if (a.iLine>0 && a.iLine<79) {  //why these numbers?
 				a.x=a.redAlien[a.iLine][4];
 				a.y=a.redAlien[a.iLine][5];
 				if(a.iLine==78) a.iMode=Alien.MODE_IDLE;
@@ -225,7 +219,7 @@ public class Galaga5 {
 			}
 		}
 
-		if(a.iMode==Alien.MODE_EXPLODE) { 						// Explode
+		if(a.iMode==Alien.MODE_EXPLODE) {
 			if(a.iExplode>0) {
 				a.iExplode--;
 			}else{
@@ -235,11 +229,11 @@ public class Galaga5 {
 			}
 		}
 
-		if(a.iMode==Alien.MODE_IDLE) {						// Idle - Coinsider an attack
+		if(a.iMode==Alien.MODE_IDLE) {	// Idle - Coinsider an attack
 			if(Math.random()>0.996) a.iMode=Alien.MODE_ATTACK;
 		}
 
-		if(a.iMode==Alien.MODE_ATTACK) {						// Attack
+		if(a.iMode==Alien.MODE_ATTACK) {
 			a.iAttack++;
 			if (a.iAttack>0&&a.iAttack<115) { //-SYNC
 				a.x=a.redAttack[a.iAttack][4]+a.redAlien[77][4]-165;  // offset atrack based on end of arrival data
@@ -281,7 +275,7 @@ public class Galaga5 {
 		for (Bomb b: bombs) {
 			if(b.bDropped) {
 				b.moveBomb();
-			
+
 				if (b.intersects(ship)) {
 					//TODO: does this remove the bomb or do they just continue accumulating
 					b.bDropped=false;
@@ -367,48 +361,29 @@ public class Galaga5 {
 	}
 
 	void drawStars(){
-
-		iStarTimer++;
-
-		if(iStarTimer<25) {
-			for (int i = 0; i < 20; i++) {  
-				gc.setColor(starColors.get(i));
-				Point p = stars.get(i);
-				gc.fillRect(p.x, p.y, 4,8);
-			}
-		}else {
-			if(iStarTimer<50) {
-				for (int i = 11; i < 40; i++) {
-					gc.setColor(starColors.get(i));
-					Point p = stars.get(i);
-					gc.fillRect(p.x, p.y, 4,8);
-				}
-			}else {
-				if(iStarTimer<75) {
-					for (int i = 21; i < 60; i++) {
-						gc.setColor(starColors.get(i));
-						Point p = stars.get(i);
-						gc.fillRect(p.x, p.y, 4,8);
-					}
-				}else {
-					for (int i = 31; i < 80; i++) {
-						gc.setColor(starColors.get(i));
-						Point p = stars.get(i);
-						gc.fillRect(p.x, p.y, 4,8);
-					}
-					if(iStarTimer==100) iStarTimer=0;
-				}
-			}
+		for (int i = 0; i < stars.size(); i++) {  
+			gc.setColor(starColors.get(i));
+			Point p = stars.get(i);
+			gc.fillRect(p.x, p.y, 4,8);
 		}
 	}
 
+
 	void moveStars() {
-		for (Point p : stars) {                        //use a for-each loop to loop through arraylist
-			p.y -= BGSPEED; //change star position
-			//if (p.y < 0) p.y = WINH + 10; //  HEY - This is one set of repeating stars!
-			if (p.y < 0) {
-				p.x = rand.nextInt(WINW);
-				p.y = WINH + 10; //  HEY - This is one set of repeating stars!
+		for (Point p : stars) {
+			p.y += BGSPEED; 
+
+			//so it will work moving up or down
+			if (BGSPEED > 0) {
+				if (p.y > WINH) {
+					p.x = rand.nextInt(WINW);
+					p.y = -10; //  HEY - This is one set of repeating stars!
+				}	
+			} else {
+				if (p.y < 0) {
+					p.x = rand.nextInt(WINW);
+					p.y = WINH + 10; //  HEY - This is one set of repeating stars!
+				}
 			}
 		}
 	}
