@@ -1,13 +1,9 @@
 package galaga;
 
-
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
-import hsa2.GraphicsConsole;
 
 public class Alien2 extends Rectangle {
 	
@@ -112,8 +108,7 @@ public class Alien2 extends Rectangle {
 			}
 			//System.out.println("");
 		    myReader.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		} catch (FileNotFoundException e) {			
 			e.printStackTrace();
 			System.exit(0);
 		}

@@ -109,15 +109,11 @@ public class GalagaShip5 {
 
 	void loadSpriteSheet() {
 		try { // must be wrapped in a 'try' statement
-			imgSprites = ImageIO.read(getClass().getClassLoader().getResource("Sprites.png"));
-		}catch(IOException ex) {
+			imgSprites = ImageIO.read(getClass().getClassLoader().getResource("sprites.png"));
+		}catch(IOException | IllegalArgumentException ex) {
 			System.out.println("Image cannot be loaded");
 			System.exit(0);
-		}
-		if (imgSprites == null) {
-			System.out.println("Image cannot be loaded");
-			System.exit(0);
-		}
+		}		
 	}
 
 	void calcGraphics() {		
