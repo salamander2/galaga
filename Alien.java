@@ -1,26 +1,27 @@
 package galaga;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+import hsa2.GraphicsConsole;
 
 public class Alien extends Rectangle {
 	
 	static final int WINW 		= 768;
 	static final int WINH 		= 1024;
 	//int x,y;
-//	private int iSpr=0;
-//	private int iRot=0;
-//	private int iFH=0;
-//	private int iFV=0;
-	//TODO check iPosX vs rectangle.x
-//	int iPosX=0;
-//	int iPosY=0;		
+	private int iSpr=0;
+	private int iRot=0;
+	private int iFH=0;
+	private int iFV=0;
+	int iPosX=0;
+	int iPosY=0;		
 	
-	//Arrays must start at zero. 
-	int redAlien[][]	=new int[80][6];
-	int redAttack[][]	=new int[120][6];
+	int redAlien[][]	=new int[80][7];
+	int redAttack[][]	=new int[120][7];
 	int iLine=0;
 
 	int iExplode=18;
@@ -28,7 +29,7 @@ public class Alien extends Rectangle {
 	int iArrival=0;
 	
 	Rectangle rAlien = new Rectangle(WINW/2, WINH-80,48,48);
-	int iMode=0;	
+	public int iMode=0;	
 	
 	Alien(int i) {
 		//System.out.println("Alien: "+i);
@@ -43,8 +44,9 @@ public class Alien extends Rectangle {
 		this.iArrival=i*6+10; // Staggered Arrival Times
 	}
 	
-	private void loadMovement(int i, int iMode) {
+	void loadMovement(int i, int iMode) {
 		// Define Enemy movement
+		// Reading from a text file: https://www.w3schools.com/java/java_files_read.asp
 		
 		String sMode="";
 		if(iMode==1) sMode="Enemy";
@@ -55,34 +57,64 @@ public class Alien extends Rectangle {
 				
 		File myObj = new File(sFilename);
 		
-		//NOTE: iLine actually starts loading data into array line 1 and not 0.
+		String p1="";
+		String p2="";
+		String p3="";
+		String p4="";
+		String p5="";
+		String p6="";
 		iLine=0;
 		try {
 			Scanner myReader = new Scanner(myObj);
-			while (myReader.hasNextLine()) {				
-		        String data = myReader.nextLine().trim();
-		       
-		        //check for comments
-		        if (data.charAt(0) == '"') continue;
-		        //Sample data: 4,7,0,0,168,168    
-		       
+			while (myReader.hasNextLine()) {
+				
+		        String data = myReader.nextLine();
+		        //System.out.println("Data = ["+data+"]");
+		        
+		        p1=data.substring(0, data.indexOf(","));
+		        data=data.substring(data.indexOf(",")+1,data.length());
+		        p2=data.substring(0, data.indexOf(","));
+		        data=data.substring(data.indexOf(",")+1,data.length());
+		        p3=data.substring(0, data.indexOf(","));
+		        data=data.substring(data.indexOf(",")+1,data.length());
+		        p4=data.substring(0, data.indexOf(","));
+		        data=data.substring(data.indexOf(",")+1,data.length());
+		        p5=data.substring(0, data.indexOf(","));
+		        data=data.substring(data.indexOf(",")+1,data.length());
+		        p6=data;
+	       
+		       // System.out.print("                  Line:"+iLine+" "+p1+","+p2+","+p3+","+p4+","+p5+","+p6);
 		        iLine++;
-		        String[] tokens = data.split(",");
-		        for (int j = 0; j < tokens.length; j++) {
-		        	if (iMode==1) {
-		        		redAlien[iLine][j] = Integer.parseInt(tokens[j]);
-		        	}
-		        	if (iMode==2) {
-		        		redAttack[iLine][j] = Integer.parseInt(tokens[j]);
-		        	}
-				}       
+		        
+		    	iSpr	= Integer.parseInt(p1);
+				iRot	= Integer.parseInt(p2);
+				iFH		= Integer.parseInt(p3);
+				iFV		= Integer.parseInt(p4);
+				iPosX	= Integer.parseInt(p5);
+				iPosY	= Integer.parseInt(p6);
+				if (iMode==1) {
+					redAlien[iLine][1]=iSpr;
+					redAlien[iLine][2]=iRot;
+					redAlien[iLine][3]=iFH;
+					redAlien[iLine][4]=iFV;
+					redAlien[iLine][5]=iPosX;
+					redAlien[iLine][6]=iPosY;
+				};
+				if (iMode==2) {
+					redAttack[iLine][1]=iSpr;
+					redAttack[iLine][2]=iRot;
+					redAttack[iLine][3]=iFH;
+					redAttack[iLine][4]=iFV;
+					redAttack[iLine][5]=iPosX;
+					redAttack[iLine][6]=iPosY;
+				};
 				
 			}
 			//System.out.println("");
 		    myReader.close();
-		} catch (FileNotFoundException e) {			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(0);
 		}
 		
 	}
