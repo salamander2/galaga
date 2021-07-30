@@ -24,31 +24,29 @@ public class GalagaShip5 {
 	public static void main(String[] args) {
 		new GalagaShip5();
 	}
-	
+
 	static final int WINW 		= 1024;
 	//static final int WINH 		= 1024; TOO TALL FOR My SCREEN
 	static final int WINH 		= 900;
-	
+
 	Random rand = new Random();
-	
+
 	GraphicsConsole gc = new GraphicsConsole (WINW,WINH, "Galaga Ship");
 	static BufferedImage imgSprites=null;
-	
+
 	ArrayList<Alien2> aliens = new ArrayList<Alien2>();	
 	ArrayList<Shot> shots = new ArrayList<Shot>();
 	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
-	
+
 	Rectangle ship = new Rectangle(WINW/2, WINH-80,30,30);
-	Rectangle shot = new Rectangle(WINW/2, WINH-80,16,18);
-	int shipSpeed = 16;
-	int shotSpeed = 24;
-	int bombSpeed = 1;
+
+	int shipSpeed = 16;		
 	boolean initShot = false;
-	
+
 	int iFireX=0;
 	int iFireY=0;
 	static boolean bFired=false;
-	
+
 	// Starfield Init
 	int tk=0; // tick counter
 	static final int NUMSTARS 	= 80;
@@ -56,90 +54,34 @@ public class GalagaShip5 {
 	ArrayList<Point> stars = new ArrayList<Point>();
 	ArrayList<Color> starColors = new ArrayList<Color>();
 	int iStarTimer=0;
-	
+
 	//Scoring and Other Text Display in TTF font 
 	int iScore=0;
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	
+
 	// Ship Explode
 	boolean bShipExplode=false;
 	int iShipExplode=0;
-	
+
 	GalagaShip5() {
 		setup();
 		while(true) {
 			calcGraphics();
 			drawGraphics();
-			//gc.sleep(1000);
+			gc.sleep(1);
 		}
 	}
-	
-	public class Shot extends Rectangle {
-		
-		boolean bFired=true;
-		
-		Shot() {
-			System.out.println("init shot "+ship.x+","+ship.y);
-			x=ship.x;
-			y=ship.y;
-			height=30;
-			width=30;
-			bFired=true;
-	
-		}
-		public void moveShot() {
-			//System.out.println("move shot");
-			x=x+1;
-			y=y-shotSpeed;
-			if(y<0) {
-				bFired=false;
-			}
-		}
-		public void drawShot() {
-			//System.out.println("draw shot "+x+","+y);
-			showSprite(	0,8,0,0,x, y);		
-		}
-	}
-	
-	public class Bomb extends Rectangle {
-		
-		boolean bDropped=true;
-		
-		Bomb() {
-			//System.out.println("init shot "+ship.x+","+ship.y);
-			x=ship.x;
-			y=0;
-			height=30;
-			width=30;
-			bDropped=true;
-	
-		}
-		public void moveBomb() {
-			//System.out.println("move shot");
-			//x=x+1;
-			y=y+bombSpeed;
-			if(y>WINH) {
-				bDropped=false;
-			}
-		}
-		public void drawBomb() {
-			//System.out.println("draw shot "+x+","+y);
-			showSprite(	0,8,0,0,x, y);		
-		}
-	}
-	
-	
+
 	void setup() {
 		gc.setBackgroundColor(Color.black);
 		gc.clear();
 		loadSpriteSheet();
-		
+
 		for(int j=1;j<9;j++) {
-			Alien2 a=	new Alien2(j);
+			Alien2 a =	new Alien2(j);
 			aliens.add(a);	
 		}
-		
-		
+
 		//create and store a random starfield
 		int x,y;
 		for (int i = 0; i < NUMSTARS; i++) {
@@ -148,7 +90,7 @@ public class GalagaShip5 {
 			stars.add(new Point(x,y));
 			starColors.add(new Color(rand.nextInt(100)+100, rand.nextInt(100)+100, rand.nextInt(100)+100, rand.nextInt(100)+100)); 
 		}
-		
+
 		// Setup Font
 		//TODO: fix error if file not found. The program does not print error message.
 		try {
@@ -161,30 +103,35 @@ public class GalagaShip5 {
 		// Load Font
 		Font font = new Font("ARCADECLASSIC", Font.BOLD, 40); 
 		gc.setFont(font);
-		
-		
+
+
 	}
-	//TODO: fix error if file not found. The program does not print error message.
+
 	void loadSpriteSheet() {
 		try { // must be wrapped in a 'try' statement
-			imgSprites = ImageIO.read(getClass().getClassLoader().getResource("sprites.png"));
+			imgSprites = ImageIO.read(getClass().getClassLoader().getResource("Sprites.png"));
 		}catch(IOException ex) {
 			System.out.println("Image cannot be loaded");
+			System.exit(0);
+		}
+		if (imgSprites == null) {
+			System.out.println("Image cannot be loaded");
+			System.exit(0);
 		}
 	}
-	
+
 	void calcGraphics() {		
-	
-			moveShip();
-			//moveShot();
-			// Calc the aliens
-			for (Alien2 a: aliens) {
-				alienGo(a);
-			}
-			fireShot();
-			moveStars();
+
+		moveShip();
+		//moveShot();
+		// Calc the aliens
+		for (Alien2 a: aliens) {
+			alienGo(a);
+		}
+		fireShot();
+		moveStars();
 	}
-	
+
 	void moveShip() {
 		if(!bShipExplode) {
 			if (gc.isKeyDown('A')) {
@@ -192,13 +139,13 @@ public class GalagaShip5 {
 				if (ship.x < 0) ship.x = 0;
 			}
 			if (gc.isKeyDown('D')) {
-			//	System.out.println("Move Right!");
+				//	System.out.println("Move Right!");
 				ship.x +=shipSpeed;
 				if (ship.x + ship.width > WINW-25) ship.x = WINW-ship.width-25; 
 			}
 		}
 	}
-	
+
 	void drawGraphics() {
 		String sTitle="";
 		synchronized(gc) {
@@ -206,52 +153,52 @@ public class GalagaShip5 {
 
 			//	Draw the ship
 			showSprite(0,7,0,0,ship.x,ship.y);
-			
+
 			// Draw all aliens
 			for (Alien2 a: aliens) {
 				//sTitle=sTitle+"iMode: "+a.iMode+" iAttack="+a.iAttack+", ";
 				if(a.iMode==1 || a.iMode==3) { // if Arrival Mode OR Idle Mode
-				   showSprite(
-						a.redAlien[a.iLine][1], // Sprite ID
-						a.redAlien[a.iLine][2], // Rotation
-						a.redAlien[a.iLine][3], // Flip X
-						a.redAlien[a.iLine][4], // Flip Y
-						a.x,
-						a.y
-				   );
+					showSprite(
+							a.redAlien[a.iLine][1], // Sprite ID
+							a.redAlien[a.iLine][2], // Rotation
+							a.redAlien[a.iLine][3], // Flip X
+							a.redAlien[a.iLine][4], // Flip Y
+							a.x,
+							a.y
+							);
 				}
 				if(a.iMode==2) {
 					gc.setColor(Color.YELLOW);
 					gc.fillOval(a.x-(int)(0.5*a.iExplode*10),
-								a.y-(int)(0.5*a.iExplode*10),
-								a.iExplode*10, a.iExplode*10);
+							a.y-(int)(0.5*a.iExplode*10),
+							a.iExplode*10, a.iExplode*10);
 				}
 				if(a.iMode==4) { // if Attack Mode	
-					 showSprite(
-						a.redAlien[a.iLine][1], // Sprite ID (based on arrival data
-						a.redAttack[a.iAttack][2], // Rotation
-						a.redAttack[a.iAttack][3], // Flip X
-						a.redAttack[a.iAttack][4], // Flip Y
-						a.x, 
-						a.y
-					);
+					showSprite(
+							a.redAlien[a.iLine][1], // Sprite ID (based on arrival data
+							a.redAttack[a.iAttack][2], // Rotation
+							a.redAttack[a.iAttack][3], // Flip X
+							a.redAttack[a.iAttack][4], // Flip Y
+							a.x, 
+							a.y
+							);
 				}
 				sTitle=sTitle+"iMode:"+a.iMode+", ";
 			}
 			for (Shot s: shots) {
 				if(s.bFired) {
 					//sTitle=sTitle+"s.x="+s.x+", s.y="+s.y;
-					s.drawShot();
+					showSprite(	0,8,0,0,s.x, s.y);
 				};
 			}
 			for (Bomb b: bombs) {
 				if(b.bDropped) {
 					//sTitle=sTitle+"s.x="+s.x+", s.y="+s.y;
-					b.drawBomb();
-				};
+					showSprite(	0,8,0,0,b.x, b.y);		
+				}				
 			}
-			
-		}
+
+		} //end of synchronized
 		drawStars();
 		showScore();
 
@@ -264,17 +211,17 @@ public class GalagaShip5 {
 				bShipExplode=false;
 			}
 		}
-		
+
 		gc.setTitle(sTitle);
 		gc.sleep(15);
 	}
-	
+
 	public  void alienGo(Alien2 a) {
 		if(a.iMode==0) { 						// Preparing for arrival
 			a.iArrival--;
 			if(a.iArrival==0) a.iMode=1; 	
 		}
-		
+
 		if(a.iMode==1) { 						// Arrival
 			a.iLine++;
 			if (a.iLine>0&&a.iLine<79) {
@@ -282,14 +229,14 @@ public class GalagaShip5 {
 				a.y=a.redAlien[a.iLine][6];
 				if(a.iLine==78) a.iMode=3;
 				if(Math.random()>0.996) {
-					Bomb bb = new Bomb();
+					Bomb bb = new Bomb(ship);
 					bb.x=a.x;
 					bb.y=a.y;
 					bombs.add(bb);
 				}
 			}
 		}
-		
+
 		if(a.iMode==2) { 						// Explode
 			if(a.iExplode>0) {
 				if(!(a.iExplode==0)) {
@@ -304,17 +251,17 @@ public class GalagaShip5 {
 				a.iMode=1;
 			}
 		}
-		
+
 		if(a.iMode==3) {						// Idle - Coinsider an attack
 			if(Math.random()>0.996) a.iMode=4;
 		}
-					
+
 		if(a.iMode==4) {						// Attack
 			a.iAttack++;
 			if (a.iAttack>0&&a.iAttack<115) { //-SYNC
 				a.x=a.redAttack[a.iAttack][5]+a.redAlien[77][5]-165;  // offset atrack based on end of arrival data
 				a.y=a.redAttack[a.iAttack][6]+a.redAlien[77][6]-170; // offset atrack based on end of arrival data
-			
+
 				if(a.iAttack==113) { //- SYNC
 					a.iAttack=0;
 					a.iLine=1;
@@ -323,13 +270,13 @@ public class GalagaShip5 {
 			}
 			if(a.iAttack>20) {
 				if(Math.random()>0.996) {
-					Bomb bb = new Bomb();
+					Bomb bb = new Bomb(ship);
 					bb.x=a.x;
 					bb.y=a.y;
-				bombs.add(bb);
+					bombs.add(bb);
 				}
 			}
-			
+
 		}
 		for (Bomb b: bombs) {
 			if(b.bDropped) {
@@ -360,7 +307,7 @@ public class GalagaShip5 {
 				}
 			}
 		}
-		
+
 		// Check for bomb collision with ship
 		for (Bomb b: bombs) {
 			if(b.bDropped) {			
@@ -371,41 +318,40 @@ public class GalagaShip5 {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	void showSprite(int iRow,int iCol,int iFlipH, int iFlipV,int iX, int iY) {
-		BufferedImage spriteImage;
-		spriteImage = imgSprites.getSubimage(1+(iCol-1)*18,iRow*18+1,16,16);
+		BufferedImage spriteImage = imgSprites.getSubimage(1+(iCol-1)*18,iRow*18+1,16,16);
 		// http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Fliptheimagehorizontally.htm
 		if(iFlipH==1) {
-			  AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-			  tx.translate(-spriteImage.getWidth(null), 0);
-			  AffineTransformOp op = new AffineTransformOp(	tx,
-					  										AffineTransformOp.TYPE_NEAREST_NEIGHBOR
-					  				 );
-			  spriteImage = op.filter(spriteImage, null);
+			AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+			tx.translate(-spriteImage.getWidth(null), 0);
+			AffineTransformOp op = new AffineTransformOp(	tx,
+					AffineTransformOp.TYPE_NEAREST_NEIGHBOR
+					);
+			spriteImage = op.filter(spriteImage, null);
 		}
 		if(iFlipV==1) {
-			  AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
-			  tx.translate(0,-spriteImage.getWidth(null));
-			  AffineTransformOp op = new AffineTransformOp(	tx,
-					  										AffineTransformOp.TYPE_NEAREST_NEIGHBOR
-					  				 );
-			  spriteImage = op.filter(spriteImage, null);
+			AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+			tx.translate(0,-spriteImage.getWidth(null));
+			AffineTransformOp op = new AffineTransformOp(	tx,
+					AffineTransformOp.TYPE_NEAREST_NEIGHBOR
+					);
+			spriteImage = op.filter(spriteImage, null);
 		}
 		Image spriteBigImage = null;
 		spriteBigImage = spriteImage.getScaledInstance(58, 58, spriteImage.TYPE_BYTE_INDEXED);
 		gc.drawImage(spriteBigImage,iX,iY);
 	}
-	
+
 	void fireShot() {
 		// detect trigger
 		if(!initShot&&!bShipExplode) {
-			if(gc.isKeyDown('S')) {
+			if(gc.isKeyDown('S') || gc.isKeyDown(' ')) {
 				System.out.println("Shot fired");
-				Shot s = new Shot();
-				shots.add(s);
+
+				shots.add(new Shot(ship));
 				initShot=true;
 			}
 		}else {
@@ -418,8 +364,7 @@ public class GalagaShip5 {
 			};
 		}
 	}
-	
-	
+
 	void drawStars(){
 		//Draw stars
 		if (tk%4==0) {
@@ -456,6 +401,7 @@ public class GalagaShip5 {
 			}
 		}
 	}
+	
 	void moveStars() {
 		for (Point p : stars) {                        //use a for-each loop to loop through arraylist
 			p.y -= BGSPEED; //change star position
@@ -464,10 +410,11 @@ public class GalagaShip5 {
 				p.x = rand.nextInt(WINW);
 				p.y = WINH + 10; //  HEY - This is one set of repeating stars!
 			}
-			
-		
+
+
 		}
 	}
+	
 	void showScore() {
 		gc.setColor(Color.RED);
 		gc.drawString("1UP", 20, 30);
