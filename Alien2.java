@@ -47,7 +47,6 @@ public class Alien2 extends Rectangle {
 	
 	void loadMovement(int i, int iMode) {
 		// Define Enemy movement
-		// Reading from a text file: https://www.w3schools.com/java/java_files_read.asp
 		
 		String sMode="";
 		if(iMode==1) sMode="Enemy";
@@ -116,6 +115,7 @@ public class Alien2 extends Rectangle {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(0);
 		}
 		
 	}
