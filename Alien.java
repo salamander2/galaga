@@ -9,31 +9,31 @@ public class Alien extends Rectangle {
 	
 	static final int WINW 		= 768;
 	static final int WINH 		= 1024;
-	//int x,y;
-//	private int iSpr=0;
-//	private int iRot=0;
-//	private int iFH=0;
-//	private int iFV=0;
-	//TODO check iPosX vs rectangle.x
-//	int iPosX=0;
-//	int iPosY=0;		
+	static final int MODE_PREP = 0;
+	static final int MODE_ARRIVE = 1;	
+	static final int MODE_EXPLODE = 2;
+	static final int MODE_IDLE = 3;
+	static final int MODE_ATTACK = 4;
+	
 	
 	//Arrays must start at zero. 
 	int redAlien[][]	=new int[80][6];
 	int redAttack[][]	=new int[120][6];
-	int iLine=0;
+	int iLine=0;	//counter for reading lines and tracking which enemy line the alien is on
+	int iAttack=0;	//which attack line
+	
+	int iExplode=18;  //location of ?? spritesheet?
 
-	int iExplode=18;
-	int iAttack=0;
+	//arrival count down timer
 	int iArrival=0;
 	
 	Rectangle rAlien = new Rectangle(WINW/2, WINH-80,48,48);
-	int iMode=0;	
+	int iMode=MODE_PREP;	
 	
 	Alien(int i) {
 		//System.out.println("Alien: "+i);
-		loadMovement(i,1);
-		loadMovement(i,2);
+		loadMovement(i,"Enemy");
+		loadMovement(i,"Attack");
 		// Set initial position of alien
 		this.x=redAlien[1][5];
 		this.y=redAlien[1][5];
@@ -43,12 +43,8 @@ public class Alien extends Rectangle {
 		this.iArrival=i*6+10; // Staggered Arrival Times
 	}
 	
-	private void loadMovement(int i, int iMode) {
+	private void loadMovement(int i, String sMode) {
 		// Define Enemy movement
-		
-		String sMode="";
-		if(iMode==1) sMode="Enemy";
-		if(iMode==2) sMode="Attack";
 		
 		String sFilename=sMode+i+".txt";
 		//System.out.println("Filename is "+sFilename);
@@ -69,14 +65,13 @@ public class Alien extends Rectangle {
 		        iLine++;
 		        String[] tokens = data.split(",");
 		        for (int j = 0; j < tokens.length; j++) {
-		        	if (iMode==1) {
+		        	if (sMode.equals("Enemy")) {
 		        		redAlien[iLine][j] = Integer.parseInt(tokens[j]);
 		        	}
-		        	if (iMode==2) {
+		        	if (sMode.equals("Attack")) {
 		        		redAttack[iLine][j] = Integer.parseInt(tokens[j]);
 		        	}
-				}       
-				
+				} 
 			}
 			//System.out.println("");
 		    myReader.close();
