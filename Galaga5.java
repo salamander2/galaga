@@ -234,11 +234,16 @@ public class Galaga5 {
 		}
 
 		if(a.iMode==Alien.MODE_ATTACK) {
+			
 			a.iAttack++;
 			if (a.iAttack>0&&a.iAttack<115) { //-SYNC
-				a.x=a.redAttack[a.iAttack][4]+a.redAlien[77][4]-165;  // offset atrack based on end of arrival data
-				a.y=a.redAttack[a.iAttack][5]+a.redAlien[77][5]-170; // offset atrack based on end of arrival data
-
+//				a.x=a.redAttack[a.iAttack][4]+a.redAlien[77][4]-165;  // offset atrack based on end of arrival data
+//				a.y=a.redAttack[a.iAttack][5]+a.redAlien[77][5]-170; // offset atrack based on end of arrival data
+				
+//try a formula for attacking.nt Lis				
+				a.x = (int)(WINW/2 + 150*1.5*Math.sin(a.iAttack/10.0));
+				a.y = (int)(WINH/2 + 150*Math.cos(1.5*a.iAttack/10.0));
+				
 				if(a.iAttack==113) { //- SYNC
 					a.iAttack=0;
 					a.iLine=1;
